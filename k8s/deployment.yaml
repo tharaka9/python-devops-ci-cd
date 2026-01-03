@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-devops-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-devops
+  template:
+    metadata:
+      labels:
+        app: python-devops
+    spec:
+      containers:
+      - name: python-app
+        image: lahiru128/python-devops-app:v1
+        ports:
+        - containerPort: 5000
