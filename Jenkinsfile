@@ -9,6 +9,21 @@ pipeline {
 
     stages {
 
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                git(
+                    url: 'https://github.com/tharaka9/python-devops-ci-cd.git',
+                    branch: 'main'
+                )
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh '''
@@ -39,15 +54,6 @@ pipeline {
                     python-app=${IMAGE_NAME}:${IMAGE_TAG}
                 '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Deployment completed successfully"
-        }
-        failure {
-            echo "❌ Pipeline failed"
         }
     }
 }
