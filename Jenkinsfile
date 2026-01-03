@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label ''
+            customWorkspace "/tmp/jenkins-${env.JOB_NAME}-${env.BUILD_NUMBER}"
+        }
+    }
 
     environment {
         IMAGE_NAME = "lahiru128/python-devops-app"
@@ -9,14 +14,9 @@ pipeline {
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                deleteDir()
-            }
-        }
-
         stage('Checkout Code') {
             steps {
+                sh 'rm -rf *'
                 git(
                     url: 'https://github.com/tharaka9/python-devops-ci-cd.git',
                     branch: 'main'
@@ -26,9 +26,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                  docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                '''
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
             }
         }
 
@@ -54,6 +52,12 @@ pipeline {
                     python-app=${IMAGE_NAME}:${IMAGE_TAG}
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'rm -rf /tmp/jenkins-${JOB_NAME}-${BUILD_NUMBER}'
         }
     }
 }
