@@ -1,7 +1,6 @@
 pipeline {
     agent {
         node {
-            label ''
             customWorkspace "/tmp/jenkins-${env.JOB_NAME}-${env.BUILD_NUMBER}"
         }
     }
@@ -16,17 +15,19 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                sh 'rm -rf *'
-                git(
-                    url: 'https://github.com/tharaka9/python-devops-ci-cd.git',
-                    branch: 'main'
-                )
+                sh '''
+                  rm -rf *
+                  git clone https://github.com/tharaka9/python-devops-ci-cd.git .
+                  git checkout main
+                '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                sh '''
+                  docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                '''
             }
         }
 
